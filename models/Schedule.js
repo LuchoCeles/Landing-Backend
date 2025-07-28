@@ -13,10 +13,7 @@ const Schedule = sequelize.define('Schedule', {
   },
   dia: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isIn: [['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']]
-    }
+    allowNull: false
   },
   hora_inicio: {
     type: DataTypes.TIME,

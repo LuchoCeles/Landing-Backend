@@ -5,7 +5,7 @@ const { sequelize } = require('../config/database');
 const getContactInfo = async (req, res) => {
   try {
     const results = await ContactInfo.findAll({
-      attributes: ['telefono', 'email', 'whatsapp'],
+      attributes: ['telefono', 'email', 'whatsapp','address_'],
       include: [{
         model: Schedule,
         as: 'horarios',
@@ -21,7 +21,7 @@ const getContactInfo = async (req, res) => {
     const seenCombinations = new Set();
 
     results.forEach(item => {
-      const comboKey = `${item.telefono}-${item.email}-${item.whatsapp}-${item['horarios.sucursal']}`;
+      const comboKey = `${item.telefono}-${item.email}-${item.whatsapp}-${item.address_}-${item['horarios.sucursal']}`;
       
       if (!seenCombinations.has(comboKey)) {
         seenCombinations.add(comboKey);
@@ -29,7 +29,8 @@ const getContactInfo = async (req, res) => {
           sucursal: item['horarios.sucursal'],
           telefono: item.telefono,
           email: item.email,
-          whatsapp: item.whatsapp
+          whatsapp: item.whatsapp,
+          address_: item.address_
         });
       }
     });

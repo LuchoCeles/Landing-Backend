@@ -21,6 +21,10 @@ const ContactInfo = sequelize.define('ContactInfo', {
   whatsapp: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  address_: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 }, {
   tableName: 'contact_info',
