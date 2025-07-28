@@ -9,10 +9,7 @@ const Schedule = sequelize.define('Schedule', {
   },
   sucursal: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isIn: [['rosario', 'mdq']]
-    }
+    allowNull: false
   },
   dia: {
     type: DataTypes.STRING,

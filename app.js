@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./models/Associations');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -6,6 +7,7 @@ const morgan = require('morgan');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const app = express();
+const { sequelize } = require('./config/database');
 
 // Middlewares
 app.use(helmet());

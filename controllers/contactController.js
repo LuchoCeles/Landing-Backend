@@ -1,12 +1,43 @@
 const ContactInfo = require('../models/ContactInfo');
+const Schedule = require('../models/Schedule');
+const { sequelize } = require('../config/database');
 
 const getContactInfo = async (req, res) => {
   try {
-    const contactInfo = await ContactInfo.findOne();
-    res.json(contactInfo);
+    const results = await ContactInfo.findAll({
+      attributes: ['telefono', 'email', 'whatsapp'],
+      include: [{
+        model: Schedule,
+        as: 'horarios',
+        through: { attributes: [] },
+        attributes: ['sucursal'],
+        required: true
+      }],
+      raw: true
+    });
+
+    // Procesamiento para formato único
+    const uniqueResults = [];
+    const seenCombinations = new Set();
+
+    results.forEach(item => {
+      const comboKey = `${item.telefono}-${item.email}-${item.whatsapp}-${item['horarios.sucursal']}`;
+      
+      if (!seenCombinations.has(comboKey)) {
+        seenCombinations.add(comboKey);
+        uniqueResults.push({
+          sucursal: item['horarios.sucursal'],
+          telefono: item.telefono,
+          email: item.email,
+          whatsapp: item.whatsapp
+        });
+      }
+    });
+
+    res.json(uniqueResults);
   } catch (error) {
-    console.error('Error fetching contact info:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -15,7 +46,7 @@ const updateContactInfo = async (req, res) => {
 
   try {
     let contactInfo = await ContactInfo.findOne();
-    
+
     if (!contactInfo) {
       contactInfo = await ContactInfo.create({
         telefono_rosario,
@@ -28,7 +59,7 @@ const updateContactInfo = async (req, res) => {
       if (telefono_mdq) contactInfo.telefono_mdq = telefono_mdq;
       if (email) contactInfo.email = email;
       if (whatsapp) contactInfo.whatsapp = whatsapp;
-      
+
       await contactInfo.save();
     }
 
