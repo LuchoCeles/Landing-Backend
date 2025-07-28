@@ -74,17 +74,20 @@ VALUES ('admin', '$2a$10$ufDbL.U.V/6AoVLjgkRq1.J6Cvq/5YSoOQl07vHjCLKX8Qr3.eUH6')
 
 INSERT INTO carousel_item (image_url, title, text, `order`) 
 VALUES 
-  ('https://ejemplo.com/imagen1.jpg', 'Primer Slide', 'Transporte seguro y confiable', 0),
-  ('https://ejemplo.com/imagen2.jpg', 'Segundo Slide', 'Servicio a todo el país', 1);
+  ('https://drive.google.com/file/d/1ARNFpkTS9vlQL0TNuUO2B3T0uuBup5EH/view?usp=drive_link', 'Transporte nacional de carga con más de 60 años de trayectoria', 'Experiencia y confiabilidad en cada entrega', 1),
+  ('https://drive.google.com/file/d/1_XEn8PpfY3LGE7Rsa0Z1yvlZ0amCTOK2/view?usp=drive_link', 'Unidades modernas y monitoreadas para mayor seguridad', 'Tecnología de vanguardia al servicio de su carga', 2),
+  ('https://drive.google.com/file/d/1ITiR9Xa92WaXuOoWR1-6YK1qKyOgyZj5/view?usp=drive_link', 'Cobertura Rosario - Mar del Plata, con logística flexible', 'Conectamos las principales ciudades de Argentina', 3)
 
 INSERT INTO about (content) 
-VALUES ('Transporte El Directo SRL es una empresa con más de 60 años de experiencia en el rubro del transporte de cargas. Nos especializamos en entregas rápidas y seguras en todo el territorio nacional.');
+VALUES ('Desde 1960, en Transporte El Directo SRL ofrecemos soluciones logísticas seguras y eficientes, especializándonos en transporte de carga, encomiendas y servicios urbanos, interurbanos y de larga distancia.
+Nuestro compromiso es garantizar cada entrega con puntualidad, seriedad y el respaldo de un equipo capacitado que comprende las necesidades específicas de cada cliente.
+Conectamos Rosario y Mar del Plata con un servicio integral que abarca desde el transporte de mercaderías hasta la gestión logística completa, adaptándonos a los requerimientos particulares de cada empresa.');
 
 -- Insertar datos iniciales de contacto para cada sucursal
 INSERT INTO contact_info (telefono, email, whatsapp,address_) 
 VALUES 
-  ('+54 341 1234567', 'rosario@transporteedirecto.com', '+54 9 341 1234567','Sucreo 1080'), -- Rosario
-  ('+54 223 9876543', 'mardelplata@transporteedirecto.com', '+54 9 223 9876543','Teodoro Bronzini 2965'); -- Mar del Plata
+  ('+54 341 1234567', 'rosario@transporteedirecto.com', '+54 341 439‑7465','Sucreo 1080'), -- Rosario
+  ('+54 223 9876543', 'mardelplata@transporteedirecto.com', '+54 223 477‑1190','Teodoro Bronzini 2965'); -- Mar del Plata
 
 
 
