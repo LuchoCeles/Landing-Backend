@@ -29,6 +29,9 @@ const Schedule = sequelize.define('Schedule', {
     type: DataTypes.TIME,
     allowNull: false
   }
+}, {
+  tableName: 'schedule',
+  timestamps: false
 });
 
 module.exports = Schedule;

@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
+const bcrypt = require('bcryptjs');
 
 const login = async (req, res) => {
-  if (!req.body.username || !req.body.password) {
+  const { username, password } = req.body;
+  if (!username || !password) {
     return res.status(400).json({
       success: false,
       message: "Usuario y contraseña son requeridos"
@@ -12,20 +14,20 @@ const login = async (req, res) => {
   try {
     // Buscar el usuario en la base de datos
     const admin = await Admin.findOne({
-      where: { username: req.body.username },
+      where: { username },
       attributes: ['id', 'username', 'password']
     });
 
     if (!admin) {
       return res.status(401).json({
         success: false,
-        message: "Credenciales inválidas"
+        message: "Usuario inválido"
       });
     }
 
     // Verificar contraseña
-    const isValid = await admin.validPassword(req.body.password);
-    if (isValid) {
+    const isValid = await bcrypt.compare(password,admin.password);
+    if (!isValid) {
       return res.status(401).json({
         success: false,
         message: "Credenciales inválidas"
@@ -39,7 +41,7 @@ const login = async (req, res) => {
         username: admin.username
       },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE}
+      { expiresIn: process.env.JWT_EXPIRE }
     );
 
     // Responder con el token

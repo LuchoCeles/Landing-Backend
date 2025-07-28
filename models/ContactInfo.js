@@ -22,6 +22,9 @@ const ContactInfo = sequelize.define('ContactInfo', {
     type: DataTypes.STRING,
     allowNull: false
   }
+}, {
+  tableName: 'contact_info',
+  timestamps: false
 });
 
 module.exports = ContactInfo;

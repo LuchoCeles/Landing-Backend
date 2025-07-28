@@ -25,7 +25,7 @@ const CarruselItem = sequelize.define('CarruselItem', {
     defaultValue: 0
   }
 }, {
-  tableName: 'carousel_items',
+  tableName: 'carousel_item',
   timestamps: false
 });
 
