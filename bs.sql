@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS admin (
 -- Tabla de items del carrusel
 CREATE TABLE IF NOT EXISTS carousel_item (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  image_url VARCHAR(255) NOT NULL,
+  image LONGTEXT NOT NULL,
+  imageType VARCHAR(80) NOT NULL,
   title VARCHAR(255) NOT NULL,
-  text TEXT,
-  `order` INT NOT NULL DEFAULT 0,
+  description TEXT,
+  `order` INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -70,13 +71,13 @@ SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';
 
 -- Insertar usuario administrador inicial (contraseña: admin123)
 INSERT INTO admin (username, password) 
-VALUES ('admin', '$2a$10$ufDbL.U.V/6AoVLjgkRq1.J6Cvq/5YSoOQl07vHjCLKX8Qr3.eUH6'); -- Contraseña hasheada con bcrypt
+VALUES ('admin', '$2a$10$ufDbL.U.V/6AoVLjgkRq1.J6Cvq/5YSoOQl07vHjCLKX8Qr3.eUH6');
 
-INSERT INTO carousel_item (image_url, title, text, `order`) 
+INSERT INTO carousel_item (image, title, description, `order`) 
 VALUES 
   ('https://drive.google.com/file/d/1ARNFpkTS9vlQL0TNuUO2B3T0uuBup5EH/view?usp=drive_link', 'Transporte nacional de carga con más de 60 años de trayectoria', 'Experiencia y confiabilidad en cada entrega', 1),
   ('https://drive.google.com/file/d/1_XEn8PpfY3LGE7Rsa0Z1yvlZ0amCTOK2/view?usp=drive_link', 'Unidades modernas y monitoreadas para mayor seguridad', 'Tecnología de vanguardia al servicio de su carga', 2),
-  ('https://drive.google.com/file/d/1ITiR9Xa92WaXuOoWR1-6YK1qKyOgyZj5/view?usp=drive_link', 'Cobertura Rosario - Mar del Plata, con logística flexible', 'Conectamos las principales ciudades de Argentina', 3)
+  ('https://drive.google.com/file/d/1ITiR9Xa92WaXuOoWR1-6YK1qKyOgyZj5/view?usp=drive_link', 'Cobertura Rosario - Mar del Plata, con logística flexible', 'Conectamos las principales ciudades de Argentina', 3);
 
 INSERT INTO about (content) 
 VALUES ('Desde 1960, en Transporte El Directo SRL ofrecemos soluciones logísticas seguras y eficientes, especializándonos en transporte de carga, encomiendas y servicios urbanos, interurbanos y de larga distancia.

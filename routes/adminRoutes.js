@@ -15,7 +15,7 @@ router.use(authMiddleware);
 
 router.route('/carrusel')
   .get(carruselController.getCarruselItems)
-  .post(carruselController.addCarruselItem);
+  .post(carruselController.upload, carruselController.addCarruselItem);
 
 router.route('/carrusel/:id')
   .put(carruselController.updateCarruselItem)

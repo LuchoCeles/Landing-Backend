@@ -11,11 +11,16 @@ const CarruselItem = sequelize.define('CarruselItem', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  image_url: {
-    type: DataTypes.STRING,
+  image: {
+    type: DataTypes.TEXT('long'),
     allowNull: false
   },
-  text: {
+  imageType: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'image/jpeg'
+  },
+  description: {
     type: DataTypes.TEXT,
     allowNull: true
   },
