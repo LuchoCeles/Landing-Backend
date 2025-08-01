@@ -50,8 +50,7 @@ const addCarruselItem = async (req, res) => {
     const newItem = await CarruselItem.create({
       title,
       description,
-      image: base64Image,
-      imageType: req.file.mimetype,
+      image: `data:${req.file.mimetype};base64,${base64Image}`,
       order: newOrder
     });
 
@@ -72,21 +71,11 @@ const getCarruselItems = async (req, res) => {
       order: [['order', 'ASC']],
       attributes: ['id', 'title', 'description', 'order', 'image']
     });
-    // Procesar las imágenes para convertirlas en URLs accesibles
-    const processedItems = items.map(item => {
-      // Si es base64 puro, crear data URL
-      if (item.image) {
-        return {
-          ...item.get({ plain: true }),
-          image: `data:image/jpeg;base64,${item.image}`
-        };
-      }
-    });
 
     res.json({
       success: true,
-      data: processedItems,
-      count: processedItems.length
+      data: items,
+      count: items.length
     });
   } catch (error) {
     console.error('Error al obtener items del carrusel:', error);
@@ -101,9 +90,10 @@ const getCarruselItems = async (req, res) => {
 // Controlador para actualizar ítem
 const updateCarruselItem = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { description, title } = req.body;
+    const {id, title, description } = req.body;
 
+    console.log(req.body);
+    
     const item = await CarruselItem.findByPk(id);
     if (!item) {
       return res.status(404).json({ message: 'Item no encontrado' });

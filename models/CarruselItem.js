@@ -15,11 +15,6 @@ const CarruselItem = sequelize.define('CarruselItem', {
     type: DataTypes.TEXT('long'),
     allowNull: false
   },
-  imageType: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'image/jpeg'
-  },
   description: {
     type: DataTypes.TEXT,
     allowNull: true
