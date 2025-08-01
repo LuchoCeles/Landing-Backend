@@ -24,7 +24,7 @@ const upload = multerConfig.single('imageFile');
 // Función para procesar imagen (para el update)
 const processImage = async (req) => {
   if (!req.file) return;
-  
+
   return {
     base64: req.file.buffer.toString('base64'),
     mimeType: req.file.mimetype
@@ -57,7 +57,7 @@ const addCarruselItem = async (req, res) => {
 
     res.status(201).json({
       ...newItem.toJSON(),
-      imageUrl: `data:${req.file.mimetype};base64,${base64Image}`
+      image: `data:${req.file.mimetype};base64,${base64Image}`
     });
   } catch (error) {
     console.error('Error al agregar ítem:', error);
@@ -65,21 +65,36 @@ const addCarruselItem = async (req, res) => {
   }
 };
 
-// Controlador para obtener ítems
+// Controlador para obtener ítems con imágenes optimizadas
 const getCarruselItems = async (req, res) => {
   try {
     const items = await CarruselItem.findAll({
-      order: [['order', 'ASC']]
+      order: [['order', 'ASC']],
+      attributes: ['id', 'title', 'description', 'order', 'image']
+    });
+    // Procesar las imágenes para convertirlas en URLs accesibles
+    const processedItems = items.map(item => {
+      // Si es base64 puro, crear data URL
+      if (item.image) {
+        return {
+          ...item.get({ plain: true }),
+          image: `data:image/jpeg;base64,${item.image}`
+        };
+      }
     });
 
-    const itemsWithUrls = items.map(item => ({
-      ...item.toJSON(),
-      imageUrl: `data:${item.imageType};base64,${item.image}`
-    }));
-
-    res.json(itemsWithUrls);
+    res.json({
+      success: true,
+      data: processedItems,
+      count: processedItems.length
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener el carrusel' });
+    console.error('Error al obtener items del carrusel:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener el carrusel',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -87,7 +102,7 @@ const getCarruselItems = async (req, res) => {
 const updateCarruselItem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { description, order, title } = req.body;
+    const { description, title } = req.body;
 
     const item = await CarruselItem.findByPk(id);
     if (!item) {
@@ -95,7 +110,6 @@ const updateCarruselItem = async (req, res) => {
     }
 
     if (description !== undefined) item.description = description;
-    if (order !== undefined) item.order = order;
     if (title !== undefined) item.title = title;
 
     if (req.file) {
@@ -109,13 +123,36 @@ const updateCarruselItem = async (req, res) => {
     await item.save();
     res.json({
       ...item.toJSON(),
-      imageUrl: `data:${item.imageType};base64,${item.image}`
+      image: `data:${item.imageType};base64,${item.image}`
     });
   } catch (error) {
     console.error('Error actualizando item:', error);
     res.status(500).json({ message: 'Error del servidor' });
   }
 };
+
+// Controlador para cambiar el orden de los ítems le llega un array con los ids y los nuevos órdenes
+const changeOrder = async (req, res) => {
+  try {
+    const items = req.body;
+
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ message: 'Formato de orden incorrecto' });
+    }
+
+    await Promise.all(items.map(item =>
+      CarruselItem.update(
+        { order: item.order },
+        { where: { id: item.id } }
+      )
+    ));
+
+    res.json({ message: 'Orden actualizado correctamente' });
+  } catch (error) {
+    console.error('Error al cambiar el orden:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+}
 
 // Controlador para eliminar ítem
 const deleteCarruselItem = async (req, res) => {
@@ -151,5 +188,6 @@ module.exports = {
   getCarruselItems,
   addCarruselItem,
   updateCarruselItem,
-  deleteCarruselItem
+  deleteCarruselItem,
+  changeOrder
 };

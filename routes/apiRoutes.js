@@ -8,7 +8,7 @@ const scheduleController = require('../controllers/scheduleController');
 
 // Rutas públicas
 router.route('/carrusel')
-  .get(carruselController.getCarruselItems);
+  .post(carruselController.getCarruselItems);
 router.get('/about', aboutController.getAboutContent);
 router.get('/contacto', contactController.getContactInfo);
 router.get('/horarios', scheduleController.getAllSchedules);

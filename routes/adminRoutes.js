@@ -12,17 +12,17 @@ router.post('/login', adminController.login);
 
 // Rutas protegidas
 router.use(authMiddleware);
-
 router.route('/carrusel')
   .get(carruselController.getCarruselItems)
+  .patch(carruselController.changeOrder)
   .post(carruselController.upload, carruselController.addCarruselItem);
 
 router.route('/carrusel/:id')
-  .put(carruselController.updateCarruselItem)
+  .patch(carruselController.updateCarruselItem)
   .delete(carruselController.deleteCarruselItem);
 
-router.put('/about', aboutController.updateAboutContent);
-router.put('/contacto', contactController.updateContactInfo);
-router.put('/horarios', scheduleController.updateSchedules);
+router.patch('/about', aboutController.updateAboutContent);
+router.patch('/contacto', contactController.updateContactInfo);
+router.patch('/horarios', scheduleController.updateSchedules);
 
 module.exports = router;
