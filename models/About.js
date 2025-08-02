@@ -10,10 +10,17 @@ const About = sequelize.define('About', {
   content: {
     type: DataTypes.TEXT,
     allowNull: false
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
 }, {
   tableName: 'about',
-  freezeTableName: true
+  freezeTableName: true,
+  timestamps: false,
+  createdAt: false,
+  updatedAt: false
 });
 
 module.exports = About;

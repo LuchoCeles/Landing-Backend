@@ -17,9 +17,8 @@ router.route('/carrusel')
   .patch(carruselController.changeOrder)
   .post(carruselController.upload, carruselController.addCarruselItem);
 
-router.patch('/carrusel/update', carruselController.updateCarruselItem);
+router.patch('/carrusel/update', carruselController.upload, carruselController.updateCarruselItem);
 router.route('/carrusel/:id')
-  .patch(carruselController.updateCarruselItem)
   .delete(carruselController.deleteCarruselItem);
 
 router.patch('/about', aboutController.updateAboutContent);

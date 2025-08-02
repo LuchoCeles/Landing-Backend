@@ -20,6 +20,7 @@ const multerConfig = multer({
 
 // Middleware para subir una sola imagen
 const upload = multerConfig.single('imageFile');
+const uploadPatch = multerConfig.single('image');
 
 // Función para procesar imagen (para el update)
 const processImage = async (req) => {
@@ -90,10 +91,8 @@ const getCarruselItems = async (req, res) => {
 // Controlador para actualizar ítem
 const updateCarruselItem = async (req, res) => {
   try {
-    const {id, title, description } = req.body;
+    const { id, title, description } = req.body;
 
-    console.log(req.body);
-    
     const item = await CarruselItem.findByPk(id);
     if (!item) {
       return res.status(404).json({ message: 'Item no encontrado' });
@@ -105,15 +104,14 @@ const updateCarruselItem = async (req, res) => {
     if (req.file) {
       const imageData = await processImage(req);
       if (imageData) {
-        item.image = imageData.base64;
-        item.imageType = imageData.mimeType;
+        item.image = `data:${imageData.imageType};base64,${imageData.image}`;
       }
     }
 
     await item.save();
     res.json({
       ...item.toJSON(),
-      image: `data:${item.imageType};base64,${item.image}`
+      message: 'Modificado Correctamente'
     });
   } catch (error) {
     console.error('Error actualizando item:', error);
@@ -174,6 +172,7 @@ const updateUpload = (req, res, next) => {
 
 module.exports = {
   upload,
+  uploadPatch,
   updateUpload,
   getCarruselItems,
   addCarruselItem,
