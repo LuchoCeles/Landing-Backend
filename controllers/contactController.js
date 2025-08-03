@@ -1,11 +1,10 @@
 const ContactInfo = require('../models/ContactInfo');
 const Schedule = require('../models/Schedule');
-const { sequelize } = require('../config/database');
 
 const getContactInfo = async (req, res) => {
   try {
     const results = await ContactInfo.findAll({
-      attributes: ['telefono', 'email', 'whatsapp','address_'],
+      attributes: ['id','telefono', 'email', 'whatsapp', 'address_'],
       include: [{
         model: Schedule,
         as: 'horarios',
@@ -21,20 +20,21 @@ const getContactInfo = async (req, res) => {
     const seenCombinations = new Set();
 
     results.forEach(item => {
-      const comboKey = `${item.telefono}-${item.email}-${item.whatsapp}-${item.address_}-${item['horarios.sucursal']}`;
-      
+      const comboKey = `${item.telefono}-${item.email}-${item.whatsapp}-${item.address_}-${item['horarios.sucursal']}-${item['contact_info.id']}`;
+
       if (!seenCombinations.has(comboKey)) {
         seenCombinations.add(comboKey);
         uniqueResults.push({
+          id: item['id'],
           sucursal: item['horarios.sucursal'],
           telefono: item.telefono,
           email: item.email,
           whatsapp: item.whatsapp,
-          address_: item.address_
+          address: item.address_
         });
       }
     });
-
+    console.log(uniqueResults);
     res.json(uniqueResults);
   } catch (error) {
     console.error('Error:', error);
@@ -43,7 +43,7 @@ const getContactInfo = async (req, res) => {
 };
 
 const updateContactInfo = async (req, res) => {
-  const { telefono_rosario, telefono_mdq, email, whatsapp } = req.body;
+  const { id, telefono_rosario, telefono_mdq, email, whatsapp } = req.body;
 
   try {
     let contactInfo = await ContactInfo.findOne();

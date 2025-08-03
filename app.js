@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const bodyParser = require('body-parser');
 const app = express();
 
 // Middlewares
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(cors({
   origin: process.env.FRONTEND_URL,
 }));
+app.use(bodyParser.json());
 
 // Rutas API
 app.use('/api', apiRoutes);
