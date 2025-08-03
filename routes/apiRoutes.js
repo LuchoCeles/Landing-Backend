@@ -12,6 +12,6 @@ router.route('/carrusel')
 router.get('/about', aboutController.getAboutContent);
 router.get('/contacto', contactController.getContactInfo);
 router.get('/horarios', scheduleController.getAllSchedules);
-router.post('/mail', mailController.getContactInfo);
+router.post('/mail', mailController.sendMail);
 
 module.exports = router;

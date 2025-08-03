@@ -34,7 +34,7 @@ const getContactInfo = async (req, res) => {
         });
       }
     });
-    console.log(uniqueResults);
+
     res.json(uniqueResults);
   } catch (error) {
     console.error('Error:', error);
