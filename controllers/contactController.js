@@ -4,7 +4,7 @@ const Schedule = require('../models/Schedule');
 const getContactInfo = async (req, res) => {
   try {
     const results = await ContactInfo.findAll({
-      attributes: ['id','telefono', 'email', 'whatsapp', 'address_'],
+      attributes: ['id', 'telefono', 'email', 'whatsapp', 'address_'],
       include: [{
         model: Schedule,
         as: 'horarios',
@@ -43,31 +43,77 @@ const getContactInfo = async (req, res) => {
 };
 
 const updateContactInfo = async (req, res) => {
-  const { id, telefono_rosario, telefono_mdq, email, whatsapp } = req.body;
+  const contactsData = req.body; // Esperamos un array de contactos
+
+  // Validación básica del input
+  if (!Array.isArray(contactsData)) return res.status(400).json({ message: 'Se espera un array de contactos' });
 
   try {
-    let contactInfo = await ContactInfo.findOne();
+    const results = [];
 
-    if (!contactInfo) {
-      contactInfo = await ContactInfo.create({
-        telefono_rosario,
-        telefono_mdq,
-        email,
-        whatsapp
-      });
-    } else {
-      if (telefono_rosario) contactInfo.telefono_rosario = telefono_rosario;
-      if (telefono_mdq) contactInfo.telefono_mdq = telefono_mdq;
-      if (email) contactInfo.email = email;
-      if (whatsapp) contactInfo.whatsapp = whatsapp;
+    for (const contactData of contactsData) {
+      const { id, telefono, sucursal, email, whatsapp, address } = contactData;
+      if (!id) {
+        results.push({
+          error: `Contacto sin ID - ${sucursal || 'Sin nombre'}`
+        });
+        continue;
+      }
 
-      await contactInfo.save();
+      try {
+        // Buscar el contacto existente
+        const contact = await ContactInfo.findOne({ where: { id } });
+
+        if (!contact) {
+          results.push({
+            error: `Contacto no encontrado - ID: ${id}`
+          });
+          continue;
+        }
+
+        if (telefono !== undefined) contact.telefono = telefono;
+        if (sucursal !== undefined) contact.sucursal = sucursal;
+        if (email !== undefined) contact.email = email;
+        if (whatsapp !== undefined) contact.whatsapp = whatsapp;
+        if (address !== undefined) contact.address = address;
+
+        await contact.save();
+        results.push({
+          success: true,
+          id: contact.id,
+          sucursal: contact.sucursal
+        });
+
+      } catch (error) {
+        console.error(`Error actualizando contacto ${id}:`, error);
+        results.push({
+          error: `Error actualizando contacto ${id}`
+        });
+      }
     }
 
-    res.json(contactInfo);
+    // Verificar si hubo errores
+    const hasErrors = results.some(result => result.error);
+
+    if (hasErrors) {
+      return res.status(207).json({ // 207 Multi-Status
+        message: 'Algunos contactos no se actualizaron correctamente',
+        results
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Todos los contactos actualizados correctamente',
+      results
+    });
+
   } catch (error) {
-    console.error('Error updating contact info:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error en el proceso de actualización:', error);
+    res.status(500).json({
+      message: 'Error interno del servidor',
+      error: error.message
+    });
   }
 };
 
