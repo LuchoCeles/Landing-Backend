@@ -37,19 +37,42 @@ const addSchedule = async (req, res) => {
 };
 
 const updateSchedules = async (req, res) => {
-  const { schedules } = req.body;
+  if (!req.body.schedules || !Array.isArray(req.body.schedules)) {
+    return res.status(400).json({ 
+      message: 'Se requiere un array de horarios en el cuerpo de la solicitud' 
+    });
+  }
+
+  const modifiedSchedules = req.body.schedules;
 
   try {
-    // Eliminar todos los horarios existentes
-    await Schedule.destroy({ where: {} });
+    // Actualizar solo los horarios modificados
+    const updatePromises = modifiedSchedules.map(async (schedule) => {
+      const existing = await Schedule.findOne({
+        where: {
+          id: schedule.id,
+          sucursal: schedule.sucursal,
+          dia: schedule.dia
+        }
+      });
+      
+      if (existing) {
+        return existing.update({ horario: schedule.horario });
+      }
+      return null;
+    });
 
-    // Crear los nuevos horarios
-    const newSchedules = await Schedule.bulkCreate(schedules);
+    await Promise.all(updatePromises);
+    
+    const updatedSchedules = await Schedule.findAll();
+    res.json(updatedSchedules);
 
-    res.json(newSchedules);
   } catch (error) {
     console.error('Error al actualizar los horarios:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ 
+      message: 'Error del servidor al actualizar horarios',
+      error: error.message 
+    });
   }
 };
 
