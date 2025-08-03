@@ -23,6 +23,10 @@ router.route('/carrusel/:id')
 
 router.patch('/about', aboutController.updateAboutContent);
 router.patch('/contacto', contactController.updateContactInfo);
-router.patch('/horarios', scheduleController.updateSchedules);
+router.route('/horarios/:id')
+  .delete(scheduleController.deleteSchedules);
+router.route('/horarios')
+  .patch(scheduleController.updateSchedules)
+  .post(scheduleController.addSchedule);
 
 module.exports = router;

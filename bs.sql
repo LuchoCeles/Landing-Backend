@@ -46,8 +46,7 @@ CREATE TABLE IF NOT EXISTS schedule (
   id INT AUTO_INCREMENT PRIMARY KEY,
   sucursal VARCHAR(50) NOT NULL,
   dia VARCHAR(40) NOT NULL,
-  hora_inicio TIME NOT NULL,
-  hora_fin TIME NOT NULL,
+  horario VARCHAR(50) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -74,9 +73,9 @@ VALUES ('admin', '$2a$10$ufDbL.U.V/6AoVLjgkRq1.J6Cvq/5YSoOQl07vHjCLKX8Qr3.eUH6')
 
 INSERT INTO carousel_item (image, title, description, `order`) 
 VALUES 
-  ('https://drive.google.com/file/d/1ARNFpkTS9vlQL0TNuUO2B3T0uuBup5EH/view?usp=drive_link', 'Transporte nacional de carga con más de 60 años de trayectoria', 'Experiencia y confiabilidad en cada entrega', 1),
-  ('https://drive.google.com/file/d/1_XEn8PpfY3LGE7Rsa0Z1yvlZ0amCTOK2/view?usp=drive_link', 'Unidades modernas y monitoreadas para mayor seguridad', 'Tecnología de vanguardia al servicio de su carga', 2),
-  ('https://drive.google.com/file/d/1ITiR9Xa92WaXuOoWR1-6YK1qKyOgyZj5/view?usp=drive_link', 'Cobertura Rosario - Mar del Plata, con logística flexible', 'Conectamos las principales ciudades de Argentina', 3);
+  ('', 'Transporte nacional de carga con más de 60 años de trayectoria', 'Experiencia y confiabilidad en cada entrega', 1),
+  ('', 'Unidades modernas y monitoreadas para mayor seguridad', 'Tecnología de vanguardia al servicio de su carga', 2),
+  ('', 'Cobertura Rosario - Mar del Plata, con logística flexible', 'Conectamos las principales ciudades de Argentina', 3);
 
 INSERT INTO about (content) 
 VALUES ('Desde 1960, en Transporte El Directo SRL ofrecemos soluciones logísticas seguras y eficientes, especializándonos en transporte de carga, encomiendas y servicios urbanos, interurbanos y de larga distancia.
@@ -92,16 +91,18 @@ VALUES
 
 
 -- Insertar horarios para Rosario
-INSERT INTO schedule (sucursal, dia, hora_inicio, hora_fin) 
+INSERT INTO schedule (sucursal, dia, horario) 
 VALUES 
-  ('Rosario', 'Lunes a Viernes', '07:00:00', '15:30:00'),
-  ('Rosario', 'Sábado', '07:00:00', '11:30:00');
+  ('Rosario', 'Lunes a Viernes', '07:00 - 15:30'),
+  ('Rosario', 'Sábado', '07:00 - 11:30'),
+  ('Rosario', 'Domingo', 'Cerrado');
 
 -- Insertar horarios para Mar del Plata
-INSERT INTO schedule (sucursal, dia, hora_inicio, hora_fin) 
+INSERT INTO schedule (sucursal, dia, horario) 
 VALUES 
-  ('Mar del Plata', 'Lunes a Viernes', '08:00:00', '16:00:00'),
-  ('Mar del Plata', 'Sábado', '08:00:00', '12:00:00');
+  ('Mar del Plata', 'Lunes a Viernes', '08:00 - 16:00'),
+  ('Mar del Plata', 'Sábado', '08:00 - 12:00'),
+  ('Mar del Plata', 'Domingo', 'Cerrado');
 
 -- Establecer relaciones en la tabla pivote (contacto 1 -> Rosario, contacto 2 -> Mar del Plata)
 -- Para Rosario

@@ -15,12 +15,8 @@ const Schedule = sequelize.define('Schedule', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  hora_inicio: {
-    type: DataTypes.TIME,
-    allowNull: false
-  },
-  hora_fin: {
-    type: DataTypes.TIME,
+  horario: {
+    type: DataTypes.STRING,
     allowNull: false
   }
 }, {
