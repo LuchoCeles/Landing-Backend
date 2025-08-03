@@ -4,7 +4,7 @@ const authMiddleware = (req, res, next) => {
   // Obtener token de Authorization header
   const authHeader = req.headers.authorization;
   
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
     return res.status(401).json({ 
       success: false,
       message: 'Autenticación requerida. Por favor provea un token.' 

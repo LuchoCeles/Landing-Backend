@@ -11,11 +11,11 @@ const CarruselItem = sequelize.define('CarruselItem', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  image_url: {
-    type: DataTypes.STRING,
+  image: {
+    type: DataTypes.TEXT('long'),
     allowNull: false
   },
-  text: {
+  description: {
     type: DataTypes.TEXT,
     allowNull: true
   },
@@ -25,7 +25,7 @@ const CarruselItem = sequelize.define('CarruselItem', {
     defaultValue: 0
   }
 }, {
-  tableName: 'carousel_items',
+  tableName: 'carousel_item',
   timestamps: false
 });
 

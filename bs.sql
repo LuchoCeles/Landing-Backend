@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS admin (
 -- Tabla de items del carrusel
 CREATE TABLE IF NOT EXISTS carousel_item (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  image_url VARCHAR(255) NOT NULL,
+  image LONGTEXT NOT NULL,
   title VARCHAR(255) NOT NULL,
-  text TEXT,
-  `order` INT NOT NULL DEFAULT 0,
+  description TEXT,
+  `order` INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -30,61 +30,85 @@ CREATE TABLE IF NOT EXISTS about (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de información de contacto (versión nueva con estructura diferente)
+-- Tabla de información de contacto 
 CREATE TABLE IF NOT EXISTS contact_info (
   id INT AUTO_INCREMENT PRIMARY KEY,
   telefono VARCHAR(25) NOT NULL,
   email VARCHAR(100) NOT NULL,
   whatsapp VARCHAR(20) NOT NULL,
+  address_ VARCHAR(100) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de horarios (versión nueva con estructura diferente)
+-- Tabla de horarios
 CREATE TABLE IF NOT EXISTS schedule (
   id INT AUTO_INCREMENT PRIMARY KEY,
   sucursal VARCHAR(50) NOT NULL,
   dia VARCHAR(40) NOT NULL,
-  hora_inicio TIME NOT NULL,
-  hora_fin TIME NOT NULL,
+  horario VARCHAR(50) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla pivot para relacionar contactos con horarios
+CREATE TABLE IF NOT EXISTS contact_schedule_pivot (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    contact_id INT NOT NULL,
+    schedule_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (contact_id) REFERENCES contact_info(id),
+    FOREIGN KEY (schedule_id) REFERENCES schedule(id),
+    UNIQUE KEY (contact_id, schedule_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- Configurar el modo SQL para evitar problemas de compatibilidad
 SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';
 
 -- Insertar usuario administrador inicial (contraseña: admin123)
 INSERT INTO admin (username, password) 
-VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MrYV7Z1Qy6ZAl/CsMpKW7zJYQYFggJO');
+VALUES ('admin', '$2a$10$ufDbL.U.V/6AoVLjgkRq1.J6Cvq/5YSoOQl07vHjCLKX8Qr3.eUH6');
 
--- Insertar datos iniciales del carrusel (igual en ambas versiones)
-INSERT INTO carousel_item (image_url, title, text, `order`) 
+INSERT INTO carousel_item (image, title, description, `order`) 
 VALUES 
-  ('https://ejemplo.com/imagen1.jpg', 'Primer Slide', 'Transporte seguro y confiable', 0),
-  ('https://ejemplo.com/imagen2.jpg', 'Segundo Slide', 'Servicio a todo el país', 1);
+  ('', 'Transporte nacional de carga con más de 60 años de trayectoria', 'Experiencia y confiabilidad en cada entrega', 1),
+  ('', 'Unidades modernas y monitoreadas para mayor seguridad', 'Tecnología de vanguardia al servicio de su carga', 2),
+  ('', 'Cobertura Rosario - Mar del Plata, con logística flexible', 'Conectamos las principales ciudades de Argentina', 3);
 
--- Insertar texto inicial "Sobre Nosotros" (igual en ambas versiones)
 INSERT INTO about (content) 
-VALUES ('Transporte El Directo SRL es una empresa con más de 20 años de experiencia en el rubro del transporte de cargas. Nos especializamos en entregas rápidas y seguras en todo el territorio nacional.');
+VALUES ('Desde 1960, en Transporte El Directo SRL ofrecemos soluciones logísticas seguras y eficientes, especializándonos en transporte de carga, encomiendas y servicios urbanos, interurbanos y de larga distancia.
+Nuestro compromiso es garantizar cada entrega con puntualidad, seriedad y el respaldo de un equipo capacitado que comprende las necesidades específicas de cada cliente.
+Conectamos Rosario y Mar del Plata con un servicio integral que abarca desde el transporte de mercaderías hasta la gestión logística completa, adaptándonos a los requerimientos particulares de cada empresa.');
 
--- Insertar datos iniciales de contacto (adaptado a la nueva estructura)
--- Nota: La nueva estructura no tiene separación por ciudad, así que elegí el teléfono de Rosario como principal
-INSERT INTO contact_info (telefono, email, whatsapp) 
+-- Insertar datos iniciales de contacto para cada sucursal
+INSERT INTO contact_info (telefono, email, whatsapp,address_) 
 VALUES 
-  ('+54 341 1234567', 'info@transporteedirecto.com', '+54 9 341 1234567');
+  ('+54 341 1234567', 'rosario@transporteedirecto.com', '+54 341 439‑7465','Sucreo 1080'), -- Rosario
+  ('+54 223 9876543', 'mardelplata@transporteedirecto.com', '+54 223 477‑1190','Teodoro Bronzini 2965'); -- Mar del Plata
 
--- Insertar horarios iniciales (adaptado a la nueva estructura)
-INSERT INTO schedule (sucursal, dia, hora_inicio, hora_fin) 
+
+
+-- Insertar horarios para Rosario
+INSERT INTO schedule (sucursal, dia, horario) 
 VALUES 
-  ('Rosario', 'Lunes', '08:00:00', '18:00:00'),
-  ('Rosario', 'Martes', '08:00:00', '18:00:00'),
-  ('Rosario', 'Miércoles', '08:00:00', '18:00:00'),
-  ('Rosario', 'Jueves', '08:00:00', '18:00:00'),
-  ('Rosario', 'Viernes', '08:00:00', '18:00:00'),
-  ('Rosario', 'Sábado', '09:00:00', '13:00:00'),
-  ('Mar del Plata', 'Lunes', '09:00:00', '17:00:00'),
-  ('Mar del Plata', 'Martes', '09:00:00', '17:00:00'),
-  ('Mar del Plata', 'Miércoles', '09:00:00', '17:00:00'),
-  ('Mar del Plata', 'Jueves', '09:00:00', '17:00:00'),
-  ('Mar del Plata', 'Viernes', '09:00:00', '17:00:00');
+  ('Rosario', 'Lunes a Viernes', '07:00 - 15:30'),
+  ('Rosario', 'Sábado', '07:00 - 11:30'),
+  ('Rosario', 'Domingo', 'Cerrado');
+
+-- Insertar horarios para Mar del Plata
+INSERT INTO schedule (sucursal, dia, horario) 
+VALUES 
+  ('Mar del Plata', 'Lunes a Viernes', '08:00 - 16:00'),
+  ('Mar del Plata', 'Sábado', '08:00 - 12:00'),
+  ('Mar del Plata', 'Domingo', 'Cerrado');
+
+-- Establecer relaciones en la tabla pivote (contacto 1 -> Rosario, contacto 2 -> Mar del Plata)
+-- Para Rosario
+INSERT INTO contact_schedule_pivot (contact_id, schedule_id)
+SELECT 1, id FROM schedule WHERE sucursal = 'Rosario';
+
+-- Para Mar del Plata
+INSERT INTO contact_schedule_pivot (contact_id, schedule_id)
+SELECT 2, id FROM schedule WHERE sucursal = 'Mar del Plata';

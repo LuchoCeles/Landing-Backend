@@ -1,19 +1,23 @@
 require('dotenv').config();
+require('./models/Associations');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const bodyParser = require('body-parser');
 const app = express();
 
 // Middlewares
 app.use(helmet());
 app.use(morgan('dev'));
+app.use(express.static('public'));
 app.use(express.json());
 app.use(cors({
-  origin: process.env.FRONTEND_URL
+  origin: process.env.FRONTEND_URL,
 }));
+app.use(bodyParser.json());
 
 // Rutas API
 app.use('/api', apiRoutes);

@@ -9,26 +9,19 @@ const Schedule = sequelize.define('Schedule', {
   },
   sucursal: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isIn: [['rosario', 'mdq']]
-    }
+    allowNull: false
   },
   dia: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isIn: [['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']]
-    }
-  },
-  hora_inicio: {
-    type: DataTypes.TIME,
     allowNull: false
   },
-  hora_fin: {
-    type: DataTypes.TIME,
+  horario: {
+    type: DataTypes.STRING,
     allowNull: false
   }
+}, {
+  tableName: 'schedule',
+  timestamps: false
 });
 
 module.exports = Schedule;

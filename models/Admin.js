@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const bcrypt = require('bcryptjs');
 
 const Admin = sequelize.define('Admin', {
   id: {
@@ -21,33 +20,12 @@ const Admin = sequelize.define('Admin', {
     allowNull: false,
     validate: {
       notEmpty: true,
-      len: [6, 100] // Mínimo 6 caracteres
+      len: [6, 100]
     }
   }
 }, {
-  tableName: 'admins',
-  timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-  hooks: {
-    beforeCreate: async (admin) => {
-      if (admin.password) {
-        const salt = await bcrypt.genSalt(10);
-        admin.password = await bcrypt.hash(admin.password, salt);
-      }
-    },
-    beforeUpdate: async (admin) => {
-      if (admin.changed('password')) {
-        const salt = await bcrypt.genSalt(10);
-        admin.password = await bcrypt.hash(admin.password, salt);
-      }
-    }
-  }
+  tableName: 'admin',
+  timestamps: true
 });
-
-// Método para comparar contraseñas
-Admin.prototype.validPassword = async function(password) {
-  return await bcrypt.compare(password, this.password);
-};
 
 module.exports = Admin;

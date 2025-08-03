@@ -1,11 +1,11 @@
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'transporte_el_directo', // Nombre de tu BD existente
-  process.env.DB_USER || 'root', // Usuario de MySQL
-  process.env.DB_PASSWORD || '', // Contraseña
+  process.env.DB_NAME, // Nombre de tu BD existente
+  process.env.DB_USER, // Usuario de MySQL
+  process.env.DB_PASSWORD, // Contraseña
   {
-    host: process.env.DB_HOST|| 'localhost',
+    host: process.env.DB_HOST,
     dialect: 'mysql',
     logging: false
   }
