@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-// Configuración robusta del rate limiting
+// Configuración
 const emailLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutos de ventana
   max: 1, // Máximo 1 solicitud por ventana
@@ -84,9 +84,6 @@ const sendMail = async (req, res) => {
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
-    },
-    tls: {
-      rejectUnauthorized: true
     }
   });
 
