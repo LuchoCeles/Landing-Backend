@@ -98,43 +98,68 @@ const extractPublicId = (url) => {
 
 const updateCarruselItem = async (req, res) => {
   try {
-    const { id, title, description, imageUrl } = req.body;
-
+    const { id, title, description } = req.body;
+    
     const item = await CarruselItem.findByPk(id);
     if (!item) {
-      return res.status(404).json({ message: 'Item no encontrado' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Item no encontrado' 
+      });
     }
 
+    const currentImageUrl = item.image;
     let publicIdToDelete = null;
 
-    if (imageUrl && imageUrl.includes('cloudinary')) {
-      publicIdToDelete = extractPublicId(imageUrl);
+    if (req.file) {
+      try {
+        const result = await uploadToCloudinary(req.file.buffer);
+        
+        item.image = result.secure_url;
+        
+        if (currentImageUrl && currentImageUrl.includes('cloudinary')) {
+          publicIdToDelete = extractPublicId(currentImageUrl);
+        }
+      } catch (uploadError) {
+        console.error('Error subiendo nueva imagen:', uploadError);
+        return res.status(500).json({
+          success: false,
+          message: 'Error al subir la nueva imagen'
+        });
+      }
     }
 
     if (description !== undefined) item.description = description;
     if (title !== undefined) item.title = title;
 
-    if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer);
-      item.image = result.secure_url;
+    await item.save();
 
-      if (publicIdToDelete) {
-        try {
-          await cloudinary.uploader.destroy(publicIdToDelete);
-        } catch (error) {
-          console.error('Error eliminando imagen anterior de Cloudinary:', error);
-        }
+    if (publicIdToDelete) {
+      try {
+        await cloudinary.uploader.destroy(publicIdToDelete);
+      } catch (deleteError) {
+        console.error('Error eliminando imagen anterior:', deleteError);
       }
     }
 
-    await item.save();
     res.json({
-      ...item.toJSON(),
-      message: 'Modificado Correctamente'
+      success: true,
+      message: 'Item actualizado correctamente',
+      data: {
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        image: item.image,
+        order: item.order
+      }
     });
+
   } catch (error) {
     console.error('Error actualizando item:', error);
-    res.status(500).json({ message: 'Error del servidor' });
+    res.status(500).json({ 
+      success: false,
+      message: 'Error del servidor'
+    });
   }
 };
 

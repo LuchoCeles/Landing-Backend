@@ -86,13 +86,15 @@ VALUES ('admin', '$2a$10$ufDbL.U.V/6AoVLjgkRq1.J6Cvq/5YSoOQl07vHjCLKX8Qr3.eUH6')
 -- Items del carrusel
 INSERT INTO carousel_item (image, title, description, `order`) 
 VALUES 
-  ('https://ejemplo.com/imagen1.jpg', 'Transporte nacional de carga', 'Experiencia y confiabilidad en todo el país', 1),
-  ('https://ejemplo.com/imagen2.jpg', 'Flota moderna', 'Unidades equipadas con tecnología de vanguardia', 2),
-  ('https://ejemplo.com/imagen3.jpg', 'Cobertura integral', 'Conectamos las principales ciudades del país', 3);
+  ('', 'Transporte nacional de carga', 'Experiencia y confiabilidad en todo el país', 1),
+  ('', 'Flota moderna', 'Unidades equipadas con tecnología de vanguardia', 2),
+  ('', 'Cobertura integral', 'Conectamos las principales ciudades del país', 3);
 
 -- Información "Sobre Nosotros"
 INSERT INTO about (content) 
-VALUES ('<h2>Transporte El Directo SRL</h2><p>Desde 1960 ofrecemos soluciones logísticas seguras y eficientes para el transporte de mercaderías a nivel nacional. Nuestra trayectoria nos avala como una empresa confiable y comprometida con la excelencia en el servicio.</p>');
+VALUES ('Desde 1960, en Transporte El Directo SRL ofrecemos soluciones logísticas seguras y eficientes, especializándonos en transporte de carga, encomiendas y servicios urbanos, interurbanos y de larga distancia.
+Nuestro compromiso es garantizar cada entrega con puntualidad, seriedad y el respaldo de un equipo capacitado que comprende las necesidades específicas de cada cliente.
+Conectamos Rosario y Mar del Plata con un servicio integral que abarca desde el transporte de mercaderías hasta la gestión logística completa, adaptándonos a los requerimientos particulares de cada empresa.');
 
 -- Sucursales
 INSERT INTO store (nombre) 
@@ -111,16 +113,14 @@ INSERT INTO schedule (store_id, dia, horario)
 VALUES 
   (1, 'Lunes a Viernes', '07:00 - 15:30'),
   (1, 'Sábado', '07:00 - 11:30'),
-  (1, 'Domingo', 'Cerrado'),
-  (1, 'Feriados', 'Consultar');
+  (1, 'Domingo', 'Cerrado');
 
 -- Horarios para Mar del Plata (store_id = 2)
 INSERT INTO schedule (store_id, dia, horario) 
 VALUES 
   (2, 'Lunes a Viernes', '08:00 - 16:00'),
   (2, 'Sábado', '08:00 - 12:00'),
-  (2, 'Domingo', 'Cerrado'),
-  (2, 'Feriados', 'Consultar');
+  (2, 'Domingo', 'Cerrado');
 
 -- Relacionar contactos con horarios (CORREGIDO: usando store_id en lugar de IDs fijos)
 INSERT INTO contact_schedule_pivot (contact_id, schedule_id)
