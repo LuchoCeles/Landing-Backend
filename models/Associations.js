@@ -1,20 +1,44 @@
-const ContactInfo = require('./ContactInfo');
-const Schedule = require('./Schedule');
+// models/Associations.js
+function setupAssociations() {
+  const { ContactInfo, Schedule, Store } = require('./Index');
+  
+  // Relación 1:1 entre Store y ContactInfo
+  Store.hasOne(ContactInfo, {
+    foreignKey: 'store_id',
+    as: 'contacto',
+    onDelete: 'CASCADE'
+  });
 
-// Establece la relación de ContactInfo con Schedule
-ContactInfo.belongsToMany(Schedule, {
-  through: 'contact_schedule_pivot', // Nombre de la tabla pivote
-  foreignKey: 'contact_id',         // Clave foránea que apunta a ContactInfo
-  otherKey: 'schedule_id',          // Clave foránea que apunta a Schedule
-  as: 'horarios'                    // Alias opcional para la relación
-});
+  ContactInfo.belongsTo(Store, {
+    foreignKey: 'store_id',
+    as: 'sucursal'
+  });
 
-// Establece la relación inversa de Schedule con ContactInfo
-Schedule.belongsToMany(ContactInfo, {
-  through: 'contact_schedule_pivot',
-  foreignKey: 'schedule_id',        // Clave foránea que apunta a Schedule
-  otherKey: 'contact_id',           // Clave foránea que apunta a ContactInfo
-  as: 'contactos'                   // Alias opcional para la relación
-});
+  // Relación 1:N entre Store y Schedule
+  Store.hasMany(Schedule, {
+    foreignKey: 'store_id',
+    as: 'horarios'
+  });
 
-module.exports = { ContactInfo, Schedule };
+  Schedule.belongsTo(Store, {
+    foreignKey: 'store_id',
+    as: 'sucursal'
+  });
+
+  // Relación M:N entre ContactInfo y Schedule
+  ContactInfo.belongsToMany(Schedule, {
+    through: 'contact_schedule_pivot',
+    foreignKey: 'contact_id',
+    otherKey: 'schedule_id',
+    as: 'horarios'
+  });
+
+  Schedule.belongsToMany(ContactInfo, {
+    through: 'contact_schedule_pivot',
+    foreignKey: 'schedule_id',
+    otherKey: 'contact_id',
+    as: 'contactos'
+  });
+}
+
+module.exports = setupAssociations;

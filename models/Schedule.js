@@ -7,9 +7,13 @@ const Schedule = sequelize.define('Schedule', {
     primaryKey: true,
     autoIncrement: true
   },
-  sucursal: {
-    type: DataTypes.STRING,
-    allowNull: false
+  store_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'store',
+      key: 'id'
+    }
   },
   dia: {
     type: DataTypes.STRING,
@@ -21,7 +25,7 @@ const Schedule = sequelize.define('Schedule', {
   }
 }, {
   tableName: 'schedule',
-  timestamps: false
+  timestamps: true
 });
 
 module.exports = Schedule;

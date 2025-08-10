@@ -1,20 +1,19 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const About = sequelize.define('About', {
+const Store = sequelize.define('Store', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  content: {
-    type: DataTypes.TEXT,
+  nombre: {
+    type: DataTypes.STRING(50),
     allowNull: false
   }
 }, {
-  tableName: 'about',
-  freezeTableName: true,
-  timestamps: true 
+  tableName: 'store',
+  timestamps: true
 });
 
-module.exports = About;
+module.exports = Store;
