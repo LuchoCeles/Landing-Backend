@@ -11,7 +11,7 @@ function setupAssociations() {
 
   ContactInfo.belongsTo(Store, {
     foreignKey: 'store_id',
-    as: 'tienda'
+    as: 'sucursal'
   });
 
   // Relación 1:N entre Store y Schedule
@@ -22,7 +22,7 @@ function setupAssociations() {
 
   Schedule.belongsTo(Store, {
     foreignKey: 'store_id',
-    as: 'tienda'
+    as: 'sucursal'
   });
 
   // Relación M:N entre ContactInfo y Schedule

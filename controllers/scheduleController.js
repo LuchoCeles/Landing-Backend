@@ -4,9 +4,10 @@ const Store = require('../models/Store');
 const getAllSchedules = async (req, res) => {
   try {
     const schedules = await Schedule.findAll({
+      attributes:['id', 'dia', 'horario'],
       include: [{
         model: Store,
-        as: 'tienda',
+        as: 'sucursal',
         attributes: ['id', 'nombre']
       }],
       order: [

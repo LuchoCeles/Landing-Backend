@@ -10,7 +10,7 @@ const getContactInfo = async (req, res) => {
       include: [
         {
           model: Store,
-          as: 'tienda',
+          as: 'sucursal',
           attributes: ['nombre']
         },
         {
@@ -24,15 +24,11 @@ const getContactInfo = async (req, res) => {
     const formattedResults = results.map(item => {
       return {
         id: item.id,
-        sucursal: item.tienda.nombre,
+        sucursal: item.sucursal.nombre,
         telefono: item.telefono,
         email: item.email,
         whatsapp: item.whatsapp,
-        address: item.address,
-        horarios: item.horarios.map(horario => ({
-          dia: horario.dia,
-          horario: horario.horario
-        }))
+        address: item.address
       };
     });
 
