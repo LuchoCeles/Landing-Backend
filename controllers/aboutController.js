@@ -15,7 +15,7 @@ const updateAboutContent = async (req, res) => {
   const updated_at = new Date();
   try {
     const about = await About.findByPk(id, {
-      attributes: ['id', 'content', 'updated_at']
+      attributes: ['id', 'content']
     });
 
     if (!about) {
