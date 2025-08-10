@@ -24,7 +24,10 @@ const upload = multerConfig.single('image');
 const uploadToCloudinary = async (fileBuffer) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { resource_type: 'auto' },
+      {
+        resource_type: 'auto',
+        folder: 'landing-page-carrusel'
+      },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
