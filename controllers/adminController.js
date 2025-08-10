@@ -12,7 +12,6 @@ const login = async (req, res) => {
   }
 
   try {
-    // Buscar el usuario en la base de datos
     const admin = await Admin.findOne({
       where: { username },
       attributes: ['id', 'username', 'password']
@@ -25,7 +24,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Verificar contraseña
     const isValid = await bcrypt.compare(password,admin.password);
     if (!isValid) {
       return res.status(401).json({
@@ -34,7 +32,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Crear token JWT
     const token = jwt.sign(
       {
         id: admin.id,
@@ -44,7 +41,6 @@ const login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRE }
     );
 
-    // Responder con el token
     res.json({
       success: true,
       token: token,

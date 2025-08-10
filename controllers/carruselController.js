@@ -2,7 +2,6 @@ const CarruselItem = require('../models/CarruselItem');
 const path = require('path');
 const multer = require('multer');
 
-// Configuración de Multer
 const multerConfig = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -18,11 +17,11 @@ const multerConfig = multer({
   }
 });
 
-// Middleware para subir una sola imagen
+
 const upload = multerConfig.single('imageFile');
 const uploadPatch = multerConfig.single('image');
 
-// Función para procesar imagen (para el update)
+
 const processImage = async (req) => {
   if (!req.file) return;
 
@@ -32,7 +31,7 @@ const processImage = async (req) => {
   };
 };
 
-// Controlador para agregar ítem
+
 const addCarruselItem = async (req, res) => {
   try {
     if (!req.file) {
@@ -65,7 +64,7 @@ const addCarruselItem = async (req, res) => {
   }
 };
 
-// Controlador para obtener ítems con imágenes optimizadas
+
 const getCarruselItems = async (req, res) => {
   try {
     const items = await CarruselItem.findAll({
@@ -88,7 +87,7 @@ const getCarruselItems = async (req, res) => {
   }
 };
 
-// Controlador para actualizar ítem
+
 const updateCarruselItem = async (req, res) => {
   try {
     const { id, title, description } = req.body;
@@ -119,7 +118,7 @@ const updateCarruselItem = async (req, res) => {
   }
 };
 
-// Controlador para cambiar el orden de los ítems le llega un array con los ids y los nuevos órdenes
+
 const changeOrder = async (req, res) => {
   try {
     const items = req.body;
@@ -142,7 +141,7 @@ const changeOrder = async (req, res) => {
   }
 }
 
-// Controlador para eliminar ítem
+
 const deleteCarruselItem = async (req, res) => {
   try {
     const item = await CarruselItem.findByPk(req.params.id);

@@ -3,7 +3,6 @@ const Store = require('../models/Store');
 
 const getAllSchedules = async (req, res) => {
   try {
-    // Obtener todos los horarios con información de la tienda asociada
     const schedules = await Schedule.findAll({
       include: [{
         model: Store,

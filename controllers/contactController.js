@@ -80,7 +80,6 @@ const updateContactInfo = async (req, res) => {
           continue;
         }
 
-        // Actualizar solo los campos permitidos
         const camposActualizados = {};
         if (telefono !== undefined) camposActualizados.telefono = telefono;
         if (email !== undefined) camposActualizados.email = email;
