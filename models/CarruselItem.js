@@ -26,7 +26,7 @@ const CarruselItem = sequelize.define('CarruselItem', {
   }
 }, {
   tableName: 'carousel_item',
-  timestamps: false
+  timestamps: true 
 });
 
 module.exports = CarruselItem;

@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const bodyParser = require('body-parser');
+const setupAssociations  = require('./models/Associations')
 const app = express();
 
 // Middlewares
@@ -18,6 +19,9 @@ app.use(cors({
   origin: process.env.FRONTEND_URL,
 }));
 app.use(bodyParser.json());
+
+// Configurar asociaciones
+setupAssociations();
 
 // Rutas API
 app.use('/api', apiRoutes);

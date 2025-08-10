@@ -7,6 +7,14 @@ const ContactInfo = sequelize.define('ContactInfo', {
     primaryKey: true,
     autoIncrement: true
   },
+  store_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'store',
+      key: 'id'
+    }
+  },
   telefono: {
     type: DataTypes.STRING,
     allowNull: false
@@ -22,13 +30,14 @@ const ContactInfo = sequelize.define('ContactInfo', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  address_: {
+  address: {
     type: DataTypes.STRING,
     allowNull: false
   }
 }, {
   tableName: 'contact_info',
-  timestamps: false
+  timestamps: true
 });
+
 
 module.exports = ContactInfo;

@@ -1,95 +1,111 @@
 const Schedule = require('../models/Schedule');
+const Store = require('../models/Store');
 
 const getAllSchedules = async (req, res) => {
   try {
-    // Obtener todos los horarios ordenados
+    // Obtener todos los horarios con información de la tienda asociada
     const schedules = await Schedule.findAll({
+      include: [{
+        model: Store,
+        as: 'tienda',
+        attributes: ['id', 'nombre']
+      }],
       order: [
-        ['id', 'ASC'],
-        ['sucursal', 'ASC'],
+        ['store_id', 'ASC'],
         ['dia', 'ASC'],
         ['horario', 'ASC']
-      ],
-      raw: true
+      ]
     });
 
     res.json(schedules);
   } catch (error) {
     console.error('Error al obtener los horarios:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 const addSchedule = async (req, res) => {
-  const { sucursal, dia, horario } = req.body;
+  const { store_id, dia, horario } = req.body;
+
   try {
-    if (sucursal === undefined || dia === undefined || horario === undefined) {
-      return res.status(400).json({ message: 'Datos incompletos' });
+    if (!store_id || !dia || !horario) {
+      return res.status(400).json({ message: 'Faltan campos requeridos' });
     }
 
-    await Schedule.create({ sucursal, dia, horario });
-    return res.status(201).json({ message: 'Horario creado correctamente' });
+    const store = await Store.findByPk(store_id);
+    if (!store) {
+      return res.status(404).json({ message: 'Sucursal no encontrada' });
+    }
+
+    const newSchedule = await Schedule.create({
+      store_id,
+      dia,
+      horario
+    });
+
+    res.status(201).json({
+      message: 'Horario creado correctamente',
+      schedule: newSchedule
+    });
 
   } catch (error) {
-    console.error('Error al cargar la sucursal:', error);
-    return res.status(500).json({ message: 'Server error' });
+    console.error('Error al crear horario:', error);
+    res.status(500).json({
+      message: 'Error del servidor',
+      error: error.message
+    });
   }
 };
 
 const updateSchedules = async (req, res) => {
-  if (!req.body.schedules || !Array.isArray(req.body.schedules)) {
-    return res.status(400).json({ 
-      message: 'Se requiere un array de horarios en el cuerpo de la solicitud' 
-    });
-  }
-
-  const modifiedSchedules = req.body.schedules;
+  const { id, dia, horario } = req.body;
 
   try {
-    // Actualizar solo los horarios modificados
-    const updatePromises = modifiedSchedules.map(async (schedule) => {
-      const existing = await Schedule.findOne({
-        where: {
-          id: schedule.id,
-          sucursal: schedule.sucursal,
-          dia: schedule.dia
-        }
-      });
-      
-      if (existing) {
-        return existing.update({ horario: schedule.horario });
-      }
-      return null;
+    const schedule = await Schedule.findByPk(id);
+
+    if (!schedule) {
+      return res.status(404).json({ message: 'Horario no encontrado' });
+    }
+
+    if (dia !== undefined) schedule.dia = dia;
+    if (horario !== undefined) schedule.horario = horario;
+
+    await schedule.save();
+
+    res.json({
+      message: 'Horario actualizado correctamente',
+      schedule
     });
 
-    await Promise.all(updatePromises);
-    
-    const updatedSchedules = await Schedule.findAll();
-    res.json(updatedSchedules);
-
   } catch (error) {
-    console.error('Error al actualizar los horarios:', error);
-    res.status(500).json({ 
-      message: 'Error del servidor al actualizar horarios',
-      error: error.message 
+    console.error('Error al actualizar horario:', error);
+    res.status(500).json({
+      message: 'Error del servidor',
+      error: error.message
     });
   }
 };
 
 const deleteSchedules = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    if (!req.params.id) {
-      return res.status(400).json({ message: 'Se esperaba un array de horarios' });
+    const schedule = await Schedule.findByPk(id);
+
+    if (!schedule) {
+      return res.status(404).json({ message: 'Horario no encontrado' });
     }
 
-    if (req.params.id) {
-      await Schedule.destroy({ where: { id: req.params.id } });
-    }
-    return res.status(200).json({ message: 'Horarios eliminados correctamente' });
+    await schedule.destroy();
+
+    res.json({ message: 'Horario eliminado correctamente' });
 
   } catch (error) {
-    console.error('Error al eliminar horarios:', error);
-    return res.status(500).json({ message: 'Error del servidor' });
+    console.error('Error al eliminar horario:', error);
+    res.status(500).json({
+      message: 'Error del servidor',
+      error: error.message
+    });
   }
 };
 
