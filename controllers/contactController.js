@@ -1,6 +1,7 @@
 const ContactInfo = require('../models/ContactInfo');
 const Schedule = require('../models/Schedule');
 const Store = require('../models/Store');
+const sequelize = require('../config/database');
 
 const getContactInfo = async (req, res) => {
   try {
@@ -20,7 +21,6 @@ const getContactInfo = async (req, res) => {
       ]
     });
 
-    // Procesamiento para formato más limpio
     const formattedResults = results.map(item => {
       return {
         id: item.id,
