@@ -1,3 +1,4 @@
+const cloudinary = require('../config/cloudinary');
 const CarruselItem = require('../models/CarruselItem');
 const path = require('path');
 const multer = require('multer');
@@ -18,19 +19,21 @@ const multerConfig = multer({
 });
 
 
-const upload = multerConfig.single('imageFile');
-const uploadPatch = multerConfig.single('image');
+const upload = multerConfig.single('image');
 
+const uploadToCloudinary = async (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: 'auto' },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
 
-const processImage = async (req) => {
-  if (!req.file) return;
-
-  return {
-    base64: req.file.buffer.toString('base64'),
-    mimeType: req.file.mimetype
-  };
+    uploadStream.end(fileBuffer);
+  });
 };
-
 
 const addCarruselItem = async (req, res) => {
   try {
@@ -39,25 +42,23 @@ const addCarruselItem = async (req, res) => {
     }
 
     const { title, description } = req.body;
-    const base64Image = req.file.buffer.toString('base64');
+
+    const result = await uploadToCloudinary(req.file.buffer);
+    const imageUrl = result.secure_url;
 
     const lastItem = await CarruselItem.findOne({
       order: [['order', 'DESC']]
     });
-
     const newOrder = lastItem ? lastItem.order + 1 : 1;
 
     const newItem = await CarruselItem.create({
       title,
       description,
-      image: `data:${req.file.mimetype};base64,${base64Image}`,
+      image: imageUrl,
       order: newOrder
     });
 
-    res.status(201).json({
-      ...newItem.toJSON(),
-      image: `data:${req.file.mimetype};base64,${base64Image}`
-    });
+    res.status(201).json(newItem);
   } catch (error) {
     console.error('Error al agregar ítem:', error);
     res.status(500).json({ message: 'Error al agregar imagen al carrusel' });
@@ -87,23 +88,39 @@ const getCarruselItems = async (req, res) => {
   }
 };
 
+const extractPublicId = (url) => {
+  const matches = url.match(/upload\/(?:v\d+\/)?([^\.]+)/);
+  return matches ? matches[1] : null;
+};
 
 const updateCarruselItem = async (req, res) => {
   try {
-    const { id, title, description } = req.body;
+    const { id, title, description, imageUrl } = req.body;
 
     const item = await CarruselItem.findByPk(id);
     if (!item) {
       return res.status(404).json({ message: 'Item no encontrado' });
     }
 
+    let publicIdToDelete = null;
+
+    if (imageUrl && imageUrl.includes('cloudinary')) {
+      publicIdToDelete = extractPublicId(imageUrl);
+    }
+
     if (description !== undefined) item.description = description;
     if (title !== undefined) item.title = title;
 
     if (req.file) {
-      const imageData = await processImage(req);
-      if (imageData) {
-        item.image = `data:${imageData.imageType};base64,${imageData.image}`;
+      const result = await uploadToCloudinary(req.file.buffer);
+      item.image = result.secure_url;
+
+      if (publicIdToDelete) {
+        try {
+          await cloudinary.uploader.destroy(publicIdToDelete);
+        } catch (error) {
+          console.error('Error eliminando imagen anterior de Cloudinary:', error);
+        }
       }
     }
 
@@ -171,7 +188,6 @@ const updateUpload = (req, res, next) => {
 
 module.exports = {
   upload,
-  uploadPatch,
   updateUpload,
   getCarruselItems,
   addCarruselItem,
