@@ -1,4 +1,5 @@
 require('dotenv').config();
+const setupAssociations  = require('./models/Associations')
 require('./models/Associations');
 const express = require('express');
 const cors = require('cors');
@@ -6,8 +7,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 const bodyParser = require('body-parser');
-const setupAssociations  = require('./models/Associations')
 const app = express();
 
 // Middlewares
@@ -26,6 +27,7 @@ setupAssociations();
 // Rutas API
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
+app.use('/analytics', analyticsRoutes);
 
 // Manejo de errores
 app.use((err, req, res, next) => {
