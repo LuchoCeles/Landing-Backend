@@ -22,6 +22,26 @@ const Admin = sequelize.define('Admin', {
       notEmpty: true,
       len: [6, 100]
     }
+  },
+  google_access_token: {
+    type: DataTypes.STRING(512),
+    allowNull: true
+  },
+  google_refresh_token: {
+    type: DataTypes.STRING(512),
+    allowNull: true
+  },
+  google_token_expiry: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  google_analytics_connected: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  google_analytics_property_id: {
+    type: DataTypes.STRING(100),
+    allowNull: true
   }
 }, {
   tableName: 'admin',
